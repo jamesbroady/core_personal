@@ -13,20 +13,27 @@
 # limitations under the License.
 
 import logging
-import pandas as pd
 from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
 
-def read(spark, eventhub_configuration) -> DataFrame:
+
+
+def read(eventhub_configuration) -> DataFrame:
     '''
     '''
+    spark = SparkSession.builder \
+            .master("local") \
+            .appName("Word Count") \
+            .config("spark.some.config.option", "some-value") \
+            .getOrCreate()
+
     try:
         return (spark
-            .readStream
+            .readStreams
             .format("eventhubs")
             .options(**eventhub_configuration)
             .load()
            )
-
     except Exception as e:
         logging.exception('error with spark read function')
         raise e
