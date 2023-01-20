@@ -13,20 +13,23 @@
 # limitations under the License.
 
 import logging
-import pandas as pd
 from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
 
-def write(stream_df) -> DataFrame:
+def write(stream_df, mode, options, table):
     '''
     '''
     try:
         return (stream_df
-            .writeStream
-            .format("eventhubs")
-            .options()
-            .load()
+            .write
+            .format("delta")
+            .mode(mode)
+            .options(**options)
+            .saveAsTable(table)
            )
 
     except Exception as e:
-        logging.exception('error with spark read function')
+        logging.exception('error with spark write function')
         raise e
+
+

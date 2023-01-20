@@ -14,26 +14,18 @@
 
 import logging
 from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession
 
-
-
-def read(eventhub_configuration) -> DataFrame:
+def read(spark, eventhub_configuration) -> DataFrame:
     '''
     '''
-    spark = SparkSession.builder \
-            .master("local") \
-            .appName("Word Count") \
-            .config("spark.some.config.option", "some-value") \
-            .getOrCreate()
-
     try:
         return (spark
-            .readStreams
+            .read
             .format("eventhubs")
             .options(**eventhub_configuration)
             .load()
            )
+
     except Exception as e:
         logging.exception('error with spark read function')
         raise e
