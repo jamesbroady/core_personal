@@ -10,3 +10,8 @@ def test_get_spark_session(mocker: MockerFixture):
     assert isinstance(spark, SparkSession)
     assert spark.conf.get("configuration_test1") == "configuration_test_value1"
     assert spark.conf.get("configuration_test2") == "configuration_test_value2"
+
+def test_get_spark_session_exception(mocker: MockerFixture):
+    with pytest.raises(Exception) as excinfo:  
+        spark = get_spark_session("testapp", "configuration_test1")
+    assert str(excinfo.value) == 'not all arguments converted during string formatting' 
