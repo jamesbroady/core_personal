@@ -12,24 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession
-
-def write(stream_df, mode, options, table):
-    '''
-    '''
-    try:
-        return (stream_df
-            .write
-            .format("delta")
-            .mode(mode)
-            .options(**options)
-            .saveAsTable(table)
-           )
-
-    except Exception as e:
-        logging.exception('error with spark write function')
-        raise e
-
-

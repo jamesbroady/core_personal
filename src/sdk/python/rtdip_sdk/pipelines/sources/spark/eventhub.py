@@ -13,9 +13,12 @@
 # limitations under the License.
 
 import logging
-from pyspark.sql import DataFrame
+from pyspark.sql import DataFrame, SparkSession
+from Crypto.Cipher import AES
+import base64
+import hashlib
 
-def read(spark, eventhub_configuration) -> DataFrame:
+def read(spark: SparkSession, eventhub_configuration: dict) -> DataFrame:
     '''
     '''
     try:
@@ -27,5 +30,5 @@ def read(spark, eventhub_configuration) -> DataFrame:
            )
 
     except Exception as e:
-        logging.exception('error with spark read function')
+        logging.exception('error with spark read function', e.__traceback__)
         raise e

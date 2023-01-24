@@ -7,13 +7,12 @@ def get_spark_session(app_name: str = "rtdip", spark_configuration: dict = {}) -
     try:
         spark = SparkSession \
             .builder \
-            .appName(app_name) \
-            .getOrCreate()
-
+            .appName(app_name)
+        
         for configuration in spark_configuration.items():
-            spark.conf.set(configuration[0], configuration[1])
+            spark = spark.config(configuration[0], configuration[1])
 
-        return spark
+        return spark.getOrCreate()
 
     except Exception as e:
         logging.exception('error with spark session function', e.__traceback__)
