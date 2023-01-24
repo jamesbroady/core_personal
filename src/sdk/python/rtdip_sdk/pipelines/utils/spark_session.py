@@ -4,6 +4,14 @@ from pyspark.sql import SparkSession
 def spark_session(spark, session_configurations) -> SparkSession:
 
     try:
+        spark = SparkSession \
+            .builder \
+            .appName("pipeines") \
+            .config(**session_configurations) \
+            .getOrCreate()
+
+        for configuration in session_configurations:
+
         # loop through configurations and set them indvidually
         # for config in session_configurations:
             # spark_session.conf.set(config, '8g')
@@ -12,12 +20,8 @@ def spark_session(spark, session_configurations) -> SparkSession:
             # spark_session.conf.set("spark.driver.memory",'8g')
             # sc = spark_session.sparkContext
 
+            #if in dict do .iter to loop 
 
-        spark = SparkSession \
-            .builder \
-            .appName("pipeines") \
-            .config(**session_configurations) \
-            .getOrCreate()
         
         return spark
 
