@@ -14,21 +14,57 @@
 
 import logging
 from pyspark.sql import DataFrame, SparkSession
-from Crypto.Cipher import AES
-import base64
-import hashlib
 
-def read(spark: SparkSession, eventhub_configuration: dict) -> DataFrame:
-    '''
-    '''
-    try:
-        return (spark
-            .read
-            .format("eventhubs")
-            .options(**eventhub_configuration)
-            .load()
-           )
+from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
+from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibrary, SystemType
 
-    except Exception as e:
-        logging.exception('error with spark read function', e.__traceback__)
-        raise e
+class SparkEventhubSource(SourceInterface):
+    '''
+
+    ''' 
+    @property
+    def system_type(self):
+        return SystemType.PYSPARK
+
+    def libraries(self):
+        libraries = Libraries()
+        libraries.add_maven_library(
+            MavenLibrary(
+                group_id="com.microsoft.azure",
+                artifact_id="azure-eventhubs-spark_2.12",
+                version="2.3.22"
+            )
+        )
+        return libraries
+    
+    @property
+    def settings(self) -> dict:
+        return {}
+    
+    def pre_read_validation(self):
+        return True
+    
+    def post_read_validation(self):
+        return True
+
+    def read_batch(self, spark: SparkSession, options: dict) -> DataFrame:
+        '''
+        '''
+        try:
+            if "eventhubs.connectionString" in options:
+                sc = spark.sparkContext
+                options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(options["eventhubs.connectionString"])
+
+            return (spark
+                .read
+                .format("eventhubs")
+                .options(**options)
+                .load()
+            )
+
+        except Exception as e:
+            logging.exception('error with spark read function', e.__traceback__)
+            raise e
+        
+    def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+        return None
