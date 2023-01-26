@@ -3,13 +3,16 @@ from pyspark.sql import SparkSession
 from dotenv import load_dotenv
 from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineBaseInterface
 
-def get_spark_session(components_list: list[PipelineBaseInterface], app_name: str = "rtdip", spark_configuration: dict = {}) -> SparkSession:
+def get_spark_session(components_list: list[PipelineBaseInterface], app_name: str = "rtdip", spark_configuration: dict = {}, master=None) -> SparkSession:
 
     try:
         spark = SparkSession \
             .builder \
             .appName(app_name)
         
+        if master is not None:
+            spark = spark.master(master)
+            
         for component in components_list:
             libraries = component.libraries()
             if len(libraries.maven_libraries) > 0:

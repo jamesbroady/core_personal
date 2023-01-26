@@ -1,6 +1,6 @@
 {
 	"name": "rtdip",
-	"image": "mcr.microsoft.com/azure-functions/python:4-python3.9-core-tools",
+	"image": "mcr.microsoft.com/azure-functions/python:4-python3.10-core-tools",
 	"forwardPorts": [ 7071, 9091 ],
 
 	"customizations": {
@@ -48,7 +48,7 @@
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/node:1": {},
 		"ghcr.io/devcontainers/features/terraform:1": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		// "ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/java:1": {"version": "11"},
 		"ghcr.io/rocker-org/devcontainer-features/miniforge:1": {}
 	}
