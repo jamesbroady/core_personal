@@ -18,10 +18,16 @@ from pyspark.sql import DataFrame, SparkSession
 from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
 from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibrary, SystemType
 
-class SparkEventhubSource(SourceInterface):
+class SparkDeltaSource(SourceInterface):
     '''
 
     ''' 
+
+    table_name: str
+
+    def __init__(self, table_name) -> None:
+        self.table_name = table_name
+
     @property
     def system_type(self):
         return SystemType.PYSPARK
@@ -30,9 +36,9 @@ class SparkEventhubSource(SourceInterface):
         libraries = Libraries()
         libraries.add_maven_library(
             MavenLibrary(
-                group_id="com.microsoft.azure",
-                artifact_id="azure-eventhubs-spark_2.12",
-                version="2.3.22"
+                group_id="io.delta",
+                artifact_id="delta-core_2.12",
+                version="2.2.0"
             )
         )
         return libraries
@@ -50,20 +56,14 @@ class SparkEventhubSource(SourceInterface):
         '''
         '''
         try:
-            if "eventhubs.connectionString" in options:
-                sc = spark.sparkContext
-                options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(options["eventhubs.connectionString"])
-
             return (spark
                 .read
-                .format("eventhubs")
                 .options(**options)
-                .load()
+                .table(self.table_name)
             )
 
         except Exception as e:
-            print(e)
-            logging.exception("error with spark read function")
+            logging.exception('error with spark read delta function', e.__traceback__)
             raise e
         
     def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:

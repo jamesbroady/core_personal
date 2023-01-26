@@ -9,9 +9,10 @@ import json
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StructType, StructField, BinaryType, StringType, LongType, TimestampType, MapType
 
+@pytest.fixture(scope="class")
 def test_spark_eventhub_read_batch(mocker: MockerFixture):
     eventhub_source = SparkEventhubSource()
-    spark = get_spark_session([eventhub_source], "testapp", {})
+    spark = get_spark_session([eventhub_source], "test_spark_eventhub_read_batch", {})
     connection_string = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
     eventhub_configuration = {
         "eventhubs.connectionString": connection_string, 
