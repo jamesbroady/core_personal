@@ -47,6 +47,7 @@ The structure of this repository is shown below in the tree diagram.
     │   │   │    │   ├── authentication
     │   │   │    │   ├── functions
     │   │   │    │   ├── odbc
+    │   │   │    │   ├── pipelines    
     ├── tests
     │   ├── api
     │   │   ├── auth
@@ -59,6 +60,7 @@ The structure of this repository is shown below in the tree diagram.
     │   │   │    │   ├── authentication
     │   │   │    │   ├── functions
     │   │   │    │   ├── odbc
+    │   │   │    │   ├── pipelines    
     ├── CODE_OF_CONDUCT.md  
     ├── CODEOWNERS.md 
     ├── CONTRIBUTING.md

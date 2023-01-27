@@ -12,20 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, SystemType
+from abc import abstractmethod
+from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineBaseInterface
 
-class PipelineBaseInterface(ABC):
-        
-        @property
-        @abstractmethod
-        def system_type(self) -> SystemType:
-            pass
-        
-        @abstractmethod
-        def libraries(self) -> Libraries:
-            pass
+class TransformerInterface(PipelineBaseInterface):
     
-        @abstractmethod
-        def settings(self) -> dict:
-            pass
+    @abstractmethod
+    def pre_transform_validation(self) -> bool:
+        pass
+
+    @abstractmethod
+    def post_transform_validation(self) -> bool:
+        pass
+
+    @abstractmethod
+    def transform(self):
+        pass

@@ -14,13 +14,15 @@
 
 import sys
 sys.path.insert(0, '.')
-from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
+from src.sdk.python.rtdip_sdk.pipelines.transformers.spark.eventhub import EventhubBodyBinaryToString
 from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import spark_session
 
-def test_spark_delta_write_batch(spark_session):
-    delta_destination = SparkDeltaDestination("test_spark_delta_write_batch")
-    expected_df = spark_session.createDataFrame([{"id": "1"}])
-    delta_destination.write_batch(expected_df, {}, "overwrite")
-    actual_df = spark_session.table("test_spark_delta_write_batch")
+from pyspark.sql import SparkSession
+
+def test_spark_eventhub_transform_body_to_string(spark_session: SparkSession):
+    eventhub_binary_to_string_transformer = EventhubBodyBinaryToString()
+    expected_df = spark_session.createDataFrame([{"body": "1"}])
+    binary_df = expected_df.withColumn("body", expected_df["body"].cast("binary"))
+    actual_df = eventhub_binary_to_string_transformer.transform(binary_df)
     assert expected_df.schema == actual_df.schema
     assert expected_df.collect() == actual_df.collect()

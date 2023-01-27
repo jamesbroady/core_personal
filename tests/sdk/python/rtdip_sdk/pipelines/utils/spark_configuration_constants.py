@@ -1,5 +1,4 @@
 # Copyright 2022 RTDIP
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,7 +14,8 @@
 import sys
 sys.path.insert(0, '.')
 import pytest
-from pyspark.sql import SparkSession
+import os
+import shutil
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.delta import SparkDeltaSource
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
@@ -30,6 +30,14 @@ SPARK_TESTING_CONFIGURATION = {
 @pytest.fixture(scope="session")
 def spark_session():
     component_list = [SparkDeltaSource("test_table"), SparkDeltaDestination("test_table"), SparkEventhubSource()]
-    spark = get_spark_session(component_list, "test_app", SPARK_TESTING_CONFIGURATION, "local[1]") 
+    spark = get_spark_session(component_list, "test_app", SPARK_TESTING_CONFIGURATION, "local[1]")
+    path = spark.conf.get("spark.sql.warehouse.dir")
+    prefix = "file:"
+    if path.startswith(prefix):
+        path = path[len(prefix):]    
+    if os.path.isdir(path):
+        shutil.rmtree(path)    
     yield spark
     spark.stop()
+    if os.path.isdir(path):
+        shutil.rmtree(path)    
