@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineBaseInterface
+from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseInterface
 
-class DestinationInterface(PipelineBaseInterface):
+class DestinationInterface(PipelineComponentBaseInterface):
 
     @abstractmethod
     def destination_definition(self) -> dict:

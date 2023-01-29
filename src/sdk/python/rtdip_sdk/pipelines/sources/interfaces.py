@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from abc import abstractmethod
-from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineBaseInterface
+from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseInterface
 
-class SourceInterface(PipelineBaseInterface):
+class SourceInterface(PipelineComponentBaseInterface):
     
     @abstractmethod
     def pre_read_validation(self) -> bool:

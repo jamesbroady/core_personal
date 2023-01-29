@@ -21,15 +21,17 @@ class EventhubBodyBinaryToString(TransformerInterface):
     '''
 
     ''' 
-    @property
-    def system_type(self):
+    @staticmethod
+    def system_type():
         return SystemType.PYSPARK
 
-    def libraries(self):
+    @staticmethod
+    def libraries():
         libraries = Libraries()
         return libraries
     
-    def settings(self) -> dict:
+    @staticmethod
+    def settings() -> dict:
         return {}
     
     def pre_transform_validation(self):

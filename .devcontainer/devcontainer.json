@@ -11,7 +11,8 @@
 				"ms-python.python",
 				"GitHub.vscode-pull-request-github",
 				"GitHub.copilot",
-				"GitHub.codespaces"
+				"GitHub.codespaces",
+				"ryanluker.vscode-coverage-gutters"
 			],
 			"settings": {
 				"azureFunctions.scmDoBuildDuringDeployment": true,

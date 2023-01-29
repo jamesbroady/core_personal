@@ -14,6 +14,7 @@
 
 import logging
 from pyspark.sql import DataFrame, SparkSession
+from py4j.protocol import Py4JJavaError
 from delta.tables import DeltaTable
 
 from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
@@ -24,15 +25,20 @@ class SparkDeltaDestination(DestinationInterface):
 
     '''
     table_name: str
+    options: dict
+    mode: str
 
-    def __init__(self, table_name) -> None:
+    def __init__(self, table_name:str, options: dict, mode: str = "append") -> None:
         self.table_name = table_name
+        self.options = options
+        self.mode = mode
 
-    @property
-    def system_type(self):
+    @staticmethod
+    def system_type():
         return SystemType.PYSPARK
 
-    def libraries(self):
+    @staticmethod
+    def libraries():
         libraries = Libraries()
         libraries.add_maven_library(
             MavenLibrary(
@@ -43,7 +49,8 @@ class SparkDeltaDestination(DestinationInterface):
         )
         return libraries
     
-    def settings(self) -> dict:
+    @staticmethod
+    def settings() -> dict:
         return {
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
@@ -64,21 +71,25 @@ class SparkDeltaDestination(DestinationInterface):
     def post_write_validation(self):
         return True
 
-    def write_batch(self, df: DataFrame, options: dict, mode: str = "append") -> DataFrame:
+    def write_batch(self, df: DataFrame):
         '''
         '''
         try:
-            return (df
+            return (
+                df
                 .write
                 .format("delta")
-                .mode(mode)
-                .options(**options)
+                .mode(self.mode)
+                .options(**self.options)
                 .saveAsTable(self.table_name)
             )
 
+        # except Py4JJavaError as e:
+        #     logging.exception('error with spark write function', e.errmsg)
+        #     raise e
         except Exception as e:
             logging.exception('error with spark write function', e.__traceback__)
             raise e
         
-    def write_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+    def write_stream(self) -> DataFrame:
         return None

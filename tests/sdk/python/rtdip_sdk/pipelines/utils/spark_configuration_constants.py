@@ -19,18 +19,27 @@ import shutil
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.delta import SparkDeltaSource
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
-from src.sdk.python.rtdip_sdk.pipelines.utils.spark import get_spark_session
+from src.sdk.python.rtdip_sdk.pipelines.utils.spark import SparkClient
+from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries
 
 SPARK_TESTING_CONFIGURATION = {
     "spark.executor.cores": "1",
     "spark.executor.instances": "1",
     "spark.sql.shuffle.partitions": "1",
+    "spark.app.name": "test_app", 
+    "spark.master": "local[1]"
 }
 
 @pytest.fixture(scope="session")
 def spark_session():
-    component_list = [SparkDeltaSource("test_table"), SparkDeltaDestination("test_table"), SparkEventhubSource()]
-    spark = get_spark_session(component_list, "test_app", SPARK_TESTING_CONFIGURATION, "local[1]")
+    component_list = [SparkDeltaSource(None, {}, "test_table"), SparkDeltaDestination("test_table", {}), SparkEventhubSource(None, {})]
+    task_libraries = Libraries()
+    task_libraries.get_libraries_from_components(component_list)
+    spark_configuration = SPARK_TESTING_CONFIGURATION.copy()
+    for component in component_list:
+        spark_configuration = {**spark_configuration, **component.settings()}
+    spark_client = SparkClient(spark_configuration, task_libraries)
+    spark = spark_client.spark_session
     path = spark.conf.get("spark.sql.warehouse.dir")
     prefix = "file:"
     if path.startswith(prefix):

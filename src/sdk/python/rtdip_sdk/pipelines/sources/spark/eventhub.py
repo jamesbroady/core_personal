@@ -21,23 +21,32 @@ from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibr
 class SparkEventhubSource(SourceInterface):
     '''
 
-    ''' 
-    @property
-    def system_type(self):
+    '''
+    spark: SparkSession
+    options: dict
+
+    def __init__(self, spark: SparkSession, options: dict) -> None:
+        self.spark = spark
+        self.options = options
+
+    @staticmethod
+    def system_type():
         return SystemType.PYSPARK
 
-    def libraries(self):
-        libraries = Libraries()
-        libraries.add_maven_library(
+    @staticmethod
+    def libraries():
+        spark_libraries = Libraries()
+        spark_libraries.add_maven_library(
             MavenLibrary(
                 group_id="com.microsoft.azure",
                 artifact_id="azure-eventhubs-spark_2.12",
                 version="2.3.22"
             )
         )
-        return libraries
+        return spark_libraries
     
-    def settings(self) -> dict:
+    @staticmethod
+    def settings() -> dict:
         return {}
     
     def pre_read_validation(self):
@@ -46,18 +55,18 @@ class SparkEventhubSource(SourceInterface):
     def post_read_validation(self):
         return True
 
-    def read_batch(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_batch(self) -> DataFrame:
         '''
         '''
         try:
-            if "eventhubs.connectionString" in options:
-                sc = spark.sparkContext
-                options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(options["eventhubs.connectionString"])
+            if "eventhubs.connectionString" in self.options:
+                sc = self.spark.sparkContext
+                self.options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(self.options["eventhubs.connectionString"])
 
-            return (spark
+            return (self.spark
                 .read
                 .format("eventhubs")
-                .options(**options)
+                .options(**self.options)
                 .load()
             )
 
@@ -66,5 +75,5 @@ class SparkEventhubSource(SourceInterface):
             logging.exception("error with spark read function")
             raise e
         
-    def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_stream(self) -> DataFrame:
         return None

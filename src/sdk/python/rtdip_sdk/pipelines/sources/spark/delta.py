@@ -22,17 +22,22 @@ class SparkDeltaSource(SourceInterface):
     '''
 
     ''' 
-
+    spark: SparkSession
+    options: dict
     table_name: str
 
-    def __init__(self, table_name) -> None:
+    def __init__(self, spark: SparkSession, options: dict, table_name: str) -> None:
+        self.spark = spark
+        self.options = options
         self.table_name = table_name
 
     @property
-    def system_type(self):
+    @staticmethod
+    def system_type():
         return SystemType.PYSPARK
 
-    def libraries(self):
+    @staticmethod
+    def libraries():
         libraries = Libraries()
         libraries.add_maven_library(
             MavenLibrary(
@@ -43,7 +48,8 @@ class SparkDeltaSource(SourceInterface):
         )
         return libraries
     
-    def settings(self) -> dict:
+    @staticmethod
+    def settings() -> dict:
         return {}
     
     def pre_read_validation(self):
@@ -52,13 +58,13 @@ class SparkDeltaSource(SourceInterface):
     def post_read_validation(self):
         return True
 
-    def read_batch(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_batch(self):
         '''
         '''
         try:
-            return (spark
+            return (self.spark
                 .read
-                .options(**options)
+                .options(**self.options)
                 .table(self.table_name)
             )
 
@@ -66,5 +72,5 @@ class SparkDeltaSource(SourceInterface):
             logging.exception('error with spark read delta function', e.__traceback__)
             raise e
         
-    def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_stream(self):
         return None

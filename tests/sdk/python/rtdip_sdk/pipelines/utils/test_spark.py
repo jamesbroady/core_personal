@@ -15,18 +15,20 @@
 import sys
 sys.path.insert(0, '.')
 import pytest
-from pytest_mock import MockerFixture
 from pyspark.sql import SparkSession
-from src.sdk.python.rtdip_sdk.pipelines.utils.spark import get_spark_session
+from src.sdk.python.rtdip_sdk.pipelines.utils.spark import SparkClient
 from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import SPARK_TESTING_CONFIGURATION
+from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries
 
-def test_get_spark_session(mocker: MockerFixture):
-    spark = get_spark_session([], "test_get_spark_session", {**{"configuration_test1": "configuration_test_value1", "configuration_test2": "configuration_test_value2"}, **SPARK_TESTING_CONFIGURATION})
+def test_get_spark_session():
+    spark_client = SparkClient({**{"configuration_test1": "configuration_test_value1", "configuration_test2": "configuration_test_value2"}, **SPARK_TESTING_CONFIGURATION}, Libraries())
+    spark = spark_client.spark_session
     assert isinstance(spark, SparkSession)
     assert spark.conf.get("configuration_test1") == "configuration_test_value1"
     assert spark.conf.get("configuration_test2") == "configuration_test_value2"
 
-def test_get_spark_session_exception(mocker: MockerFixture):
-    with pytest.raises(Exception) as excinfo:  
-        spark = get_spark_session([], "test_get_spark_session_exception", "configuration_test1")
+def test_get_spark_session_exception():
+    with pytest.raises(Exception) as excinfo:
+        spark_client = SparkClient({}, None)
+        spark = spark_client.get_spark_session([], "test_get_spark_session_exception", "configuration_test1")
     assert str(excinfo.value) == 'not all arguments converted during string formatting' 
