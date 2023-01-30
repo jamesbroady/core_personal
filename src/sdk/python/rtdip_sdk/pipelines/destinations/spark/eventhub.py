@@ -15,7 +15,6 @@
 import logging
 from pyspark.sql import DataFrame, SparkSession
 from py4j.protocol import Py4JJavaError
-from delta.tables import DeltaTable
 
 from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
 from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibrary, SystemType
@@ -39,15 +38,15 @@ class SparkDeltaDestination(DestinationInterface):
 
     @staticmethod
     def libraries():
-        libraries = Libraries()
-        libraries.add_maven_library(
+        spark_libraries = Libraries()
+        spark_libraries.add_maven_library(
             MavenLibrary(
-                group_id="io.delta",
-                artifact_id="delta-core_2.12",
-                version="2.2.0"
+                group_id="com.microsoft.azure",
+                artifact_id="azure-eventhubs-spark_2.12",
+                version="2.3.22"
             )
         )
-        return libraries
+        return spark_libraries
     
     @staticmethod
     def settings() -> dict:
@@ -56,14 +55,14 @@ class SparkDeltaDestination(DestinationInterface):
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
         }
     
-    def destination_definition(self, spark: SparkSession) -> dict:
-        delta_table = (
-            DeltaTable
-            .createIfNotExists(spark)
-            .tableName(self.table_name)
-            .addColumn("id", "string")
-            .execute()       
-        )
+    # def destination_definition(self, spark: SparkSession) -> dict:
+    #     delta_table = (
+    #         DeltaTable
+    #         .createIfNotExists(spark)
+    #         .tableName(self.table_name)
+    #         .addColumn("id", "string")
+    #         .execute()       
+    #     )
     
     def pre_write_validation(self):
         return True
@@ -78,10 +77,9 @@ class SparkDeltaDestination(DestinationInterface):
             return (
                 df
                 .write
-                .format("delta")
-                .mode(self.mode)
+                .format("eventhubs")
                 .options(**self.options)
-                .saveAsTable(self.table_name)
+                .save()
             )
 
         # except Py4JJavaError as e:
@@ -97,10 +95,9 @@ class SparkDeltaDestination(DestinationInterface):
         try:
             return (df
                 .writeStream
-                .format("delta")
-                .outputMode(self.mode)
+                .format("eventhubs")
                 .options(**self.options)
-                .toTable(self.table_name)
+                .start()
             )
 
         # except Py4JJavaError as e:
