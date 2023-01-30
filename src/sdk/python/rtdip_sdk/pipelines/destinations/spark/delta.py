@@ -91,7 +91,7 @@ class SparkDeltaDestination(DestinationInterface):
             logging.exception('error with spark write batch delta function', e.__traceback__)
             raise e
         
-    def write_stream(self, df: DataFrame, options: dict, mode: str = "append") -> DataFrame:
+    def write_stream(self, df: DataFrame) -> DataFrame:
         '''
         '''
         try:
