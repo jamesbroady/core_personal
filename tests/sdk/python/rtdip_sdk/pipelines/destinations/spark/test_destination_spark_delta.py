@@ -25,3 +25,11 @@ def test_spark_delta_write_batch(spark_session: SparkSession):
     actual_df = spark_session.table("test_spark_delta_write_batch")
     assert expected_df.schema == actual_df.schema
     assert expected_df.collect() == actual_df.collect()
+
+def test_spark_delta_write_stream(spark_session: SparkSession):
+    expected_df = spark_session.createDataFrame([{"id": "1"}])
+    delta_destination = SparkDeltaDestination("test_spark_delta_write_stream", {}, "overwrite")
+    delta_destination.write_stream(expected_df)
+    actual_df = spark_session.table("test_spark_delta_write_stream")
+    assert expected_df.schema == actual_df.schema
+    assert expected_df.collect() == actual_df.collect()

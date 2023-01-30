@@ -80,7 +80,7 @@ class SparkDeltaSource(SourceInterface):
                 .readStream
                 .format("delta")
                 .options(**options)
-                .table(self.table_name)
+                .load(self.table_name)
             )
 
         except Exception as e:
