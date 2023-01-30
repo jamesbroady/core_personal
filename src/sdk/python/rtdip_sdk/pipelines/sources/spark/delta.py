@@ -25,11 +25,13 @@ class SparkDeltaSource(SourceInterface):
     spark: SparkSession
     options: dict
     table_name: str
+    table_path: str
 
-    def __init__(self, spark: SparkSession, options: dict, table_name: str) -> None:
+    def __init__(self, spark: SparkSession, options: dict, table_name: str, table_path) -> None:
         self.spark = spark
         self.options = options
         self.table_name = table_name
+        self.table_path = table_path
 
     @property
     @staticmethod
@@ -64,8 +66,8 @@ class SparkDeltaSource(SourceInterface):
         try:
             return (self.spark
                 .read
-                .options(**self.options)
-                .table(self.table_name)
+                .format("delta")
+                .load(self.table_path)
             )
 
         except Exception as e:
@@ -78,8 +80,9 @@ class SparkDeltaSource(SourceInterface):
         try:
             return (spark
                 .readStream
+                .format("delta")
                 .options(**options)
-                .table(self.table_name)
+                .load(self.table_path)
             )
 
         except Exception as e:
