@@ -28,12 +28,3 @@ def test_spark_delta_read_batch(spark_session: SparkSession):
     actual_df = delta_source.read_batch()
     assert isinstance(actual_df, DataFrame)
     assert actual_df.schema == StructType([StructField('id', StringType(), True)])
-
-# def test_spark_delta_read_stream(spark_session: SparkSession):
-#     df = spark_session.createDataFrame([{"id": "1"}])
-#     delta_destination = SparkDeltaDestination("test_spark_delta_read_batch", {}, "overwrite")       
-#     delta_source = SparkDeltaSource(spark_session, {}, "tmp/delta/test_spark_delta_read_stream") 
-#     delta_destination.write_stream(df)
-#     actual_df = delta_source.read_stream()
-#     assert isinstance(actual_df, DataFrame)
-#     assert actual_df.schema == StructType([StructField('id', StringType(), True)])
