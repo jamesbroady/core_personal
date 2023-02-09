@@ -44,25 +44,25 @@ class PipelineTask():
     depends_on_task: list[str]
     step_list: list[PipelineStep]
     provide_output_to_task: list[str]
+    batch_task: bool
 
-    def __init__(self, name: str, description: str, step_list: list[PipelineStep], depends_on_task: str = None, provide_output_to_task: str = None):
+    def __init__(self, name: str, description: str, step_list: list[PipelineStep], depends_on_task: str = None, provide_output_to_task: str = None, batch_task: bool = False):
         self.name = name
         self.description = description
         self.depends_on_task = depends_on_task
         self.step_list = step_list
         self.provide_output_to_task = provide_output_to_task
+        self.batch_task = batch_task
 
 class PipelineJob():
     name: str
     description: str
     task_list: list[PipelineTask]
-    batch_job: bool
 
-    def __init__(self, name: str, description: str, task_list: list[PipelineTask], batch_job: bool = False):
+    def __init__(self, name: str, description: str, task_list: list[PipelineTask]):
         self.name = name
         self.description = description
         self.task_list = task_list
-        self.batch_job = batch_job
 
 class PipelineJobExecute():
     job: PipelineJob
@@ -158,7 +158,7 @@ class PipelineJobExecute():
                 factory = container.providers.get(step.name)
                 # source components
                 if isinstance(factory(), SourceInterface):
-                    if self.job.batch_job:
+                    if task.batch_task:
                         result = factory().read_batch()
                     else:
                         result = factory().read_stream()
@@ -167,7 +167,7 @@ class PipelineJobExecute():
                     result = factory().transform(task_results[step.name])
                 # destination components
                 elif isinstance(factory(), DestinationInterface):
-                    if self.job.batch_job:
+                    if task.batch_task:
                         result = factory().write_batch(task_results[step.name])
                     else:
                         result = factory().read_stream(task_results[step.name])
