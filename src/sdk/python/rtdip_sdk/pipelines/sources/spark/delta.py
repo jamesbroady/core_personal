@@ -64,7 +64,7 @@ class SparkDeltaSource(SourceInterface):
         try:
             return (self.spark
                 .read
-                .options(**self.options)
+                .format("delta")
                 .table(self.table_name)
             )
 
@@ -78,8 +78,9 @@ class SparkDeltaSource(SourceInterface):
         try:
             return (spark
                 .readStream
+                .format("delta")
                 .options(**options)
-                .table(self.table_name)
+                .load(self.table_name)
             )
 
         except Exception as e:

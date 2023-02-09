@@ -16,6 +16,7 @@ import sys
 sys.path.insert(0, '.')
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
 from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import spark_session
+from pyspark.sql.functions import lit
 from pyspark.sql import SparkSession
 
 def test_spark_delta_write_batch(spark_session: SparkSession):
@@ -23,5 +24,22 @@ def test_spark_delta_write_batch(spark_session: SparkSession):
     delta_destination = SparkDeltaDestination("test_spark_delta_write_batch", {}, "overwrite")
     delta_destination.write_batch(expected_df)
     actual_df = spark_session.table("test_spark_delta_write_batch")
+    assert expected_df.schema == actual_df.schema
+    assert expected_df.collect() == actual_df.collect()
+
+def test_spark_delta_write_stream(spark_session: SparkSession):
+    #expected_df = spark_session.createDataFrame([{"id": "1"}])
+    options = {}
+    expected_df = (spark_session
+    .readStream
+    .format("rate")
+    .options(**options)
+    .load()
+    .withColumn("id", lit("1"))
+    .select("id"))
+    #expected_df = spark_session.readStream.format("rate").options(**options).load()
+    delta_destination = SparkDeltaDestination("test_spark_delta_write_stream", {}, "append")
+    delta_destination.write_stream(expected_df)
+    actual_df = spark_session.table("test_spark_delta_write_stream")
     assert expected_df.schema == actual_df.schema
     assert expected_df.collect() == actual_df.collect()
