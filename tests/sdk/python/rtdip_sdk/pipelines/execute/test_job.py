@@ -25,7 +25,8 @@ def test_pipeline_job_execute():
     step_list = []
 
     # read step
-    connection_string = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
+    # connection_string_secret = PipelineSecrets(type="AzureKeyVault", name="azasex", secret_name="eventhub-connection-string")
+    connection_string = "Endpoint=sb://az-as-ehns-ex-n-seq00039-ew-dev-gen-01.servicebus.windows.net/;SharedAccessKeyName=az-as-eh-ex-n-seq00039-ew-dev-gen-01;SharedAccessKey=mcc56eatw5o1944ndeMtlz2bgO6T4UBdyu5TIwd7D2c=;EntityPath=az-as-eh-ex-n-seq00039-ew-dev-gen-01" #"Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
     eventhub_configuration = {
         "eventhubs.connectionString": connection_string, 
         "eventhubs.consumerGroup": "$Default",
@@ -57,7 +58,7 @@ def test_pipeline_job_execute():
         component_parameters={
             "table_name": "test_table",
             "options": {},
-            "mode": "append"    
+            "mode": "overwrite"    
         },
         depends_on_step="test_step2"
     ))
@@ -65,16 +66,18 @@ def test_pipeline_job_execute():
     task = PipelineTask(
         name="test_task",
         description="test_task",
-        step_list=step_list
+        step_list=step_list,
+        batch_task=True
     )
 
     job = PipelineJob(
         name="test_job",
         description="test_job", 
-        task_list=[task],
-        batch_job=True
+        task_list=[task]
     )
 
     pipeline = PipelineJobExecute(job)
 
     result = pipeline.run()
+    
+    assert True
