@@ -75,16 +75,16 @@ class SparkEventhubSource(SourceInterface):
             logging.exception("error with spark read batch eventhub function")
             raise e
         
-    def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_stream(self) -> DataFrame:
         try:
-            if "eventhubs.connectionString" in options:
-                sc = spark.sparkContext
-                options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(options["eventhubs.connectionString"])
+            if "eventhubs.connectionString" in self.options:
+                sc = self.spark.sparkContext
+                self.options["eventhubs.connectionString"] = sc._jvm.org.apache.spark.eventhubs.EventHubsUtils.encrypt(self.options["eventhubs.connectionString"])
 
-            return (spark
+            return (self.spark
                 .readStream
                 .format("eventhubs")
-                .options(**options)
+                .options(**self.options)
                 .load()
             )
 

@@ -31,7 +31,6 @@ class SparkDeltaSource(SourceInterface):
         self.options = options
         self.table_name = table_name
 
-    @property
     @staticmethod
     def system_type():
         return SystemType.PYSPARK

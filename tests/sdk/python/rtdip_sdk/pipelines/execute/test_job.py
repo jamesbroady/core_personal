@@ -19,6 +19,7 @@ from src.sdk.python.rtdip_sdk.pipelines.execute.job import PipelineJob, Pipeline
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
 from src.sdk.python.rtdip_sdk.pipelines.transformers.spark.eventhub import EventhubBodyBinaryToString
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
+from src.sdk.python.rtdip_sdk.pipelines.sources.spark.delta_sharing import SparkDeltaSharingSource
 import json
 
 def test_pipeline_job_execute():
@@ -81,3 +82,50 @@ def test_pipeline_job_execute():
     result = pipeline.run()
     
     assert True
+
+def test_pipeline_delta_sharing_job_execute():
+    step_list = []
+
+    # read step  
+    step_list.append(PipelineStep(
+        name="test_step1",
+        description="test_step1",
+        component=SparkDeltaSharingSource,
+        component_parameters={
+            "table_path": "/workspaces/core/config.share#unity_catalog_pernis_share.sensors.pernis_restricted_events_float",
+            "options": {},
+        },
+        provide_output_to_step=["test_step2"]
+    ))
+
+    # write step
+    step_list.append(PipelineStep(
+        name="test_step2",
+        description="test_step2",
+        component=SparkDeltaDestination,
+        component_parameters={
+            "table_name": "test_table_delta_sharing",
+            "options": {},
+            "mode": "overwrite"    
+        },
+        depends_on_step="test_step1"
+    ))
+
+    task = PipelineTask(
+        name="test_task",
+        description="test_task",
+        step_list=step_list,
+        batch_task=False
+    )
+
+    job = PipelineJob(
+        name="test_job",
+        description="test_job", 
+        task_list=[task]
+    )
+
+    pipeline = PipelineJobExecute(job)
+
+    result = pipeline.run()
+    
+    assert True    

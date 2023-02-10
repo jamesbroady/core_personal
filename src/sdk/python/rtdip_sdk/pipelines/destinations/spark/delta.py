@@ -85,7 +85,7 @@ class SparkDeltaDestination(DestinationInterface):
             )
 
         except Py4JJavaError as e:
-            logging.exception('error with spark write function', e.errmsg)
+            logging.exception('error with spark write batch delta function', e.errmsg)
             raise e
         except Exception as e:
             logging.exception('error with spark write batch delta function', e.__traceback__)
@@ -104,7 +104,7 @@ class SparkDeltaDestination(DestinationInterface):
             )
 
         except Py4JJavaError as e:
-            logging.exception('error with spark write function', e.errmsg)
+            logging.exception('error with spark write stream delta function', e.errmsg)
             raise e
         except Exception as e:
             logging.exception('error with spark write stream delta function', e.__traceback__)
