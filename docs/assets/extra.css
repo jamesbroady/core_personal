@@ -43,3 +43,9 @@
 .md-nav__item .md-nav__link--active {
   color:#d445a3;
 }
+
+.image-center {
+  width: 90%;
+  display: block;
+  margin: 0 auto;
+}
