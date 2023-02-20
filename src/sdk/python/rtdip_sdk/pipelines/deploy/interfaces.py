@@ -12,22 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, SystemType
+from abc import abstractmethod
 
-class PipelineComponentBaseInterface(ABC):
-        
-        @staticmethod
-        @abstractmethod
-        def system_type() -> SystemType:
-            pass
-        
-        @staticmethod
-        @abstractmethod
-        def libraries() -> Libraries:
-            pass
-        
-        @staticmethod
-        @abstractmethod
-        def settings() -> dict:
-            pass
+class DeployInterface():
+
+    @abstractmethod
+    def deploy(self):
+        pass
+
+    @abstractmethod
+    def launch(self):
+        pass    

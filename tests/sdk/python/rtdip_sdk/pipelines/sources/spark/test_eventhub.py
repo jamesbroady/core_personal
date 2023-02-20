@@ -15,7 +15,7 @@
 import sys
 sys.path.insert(0, '.')
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
-from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import spark_session
+from tests.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark_configuration_constants import spark_session
 from pyspark.sql.types import StructType, StructField, BinaryType, StringType, LongType, TimestampType, MapType
 import json
 from pyspark.sql import DataFrame, SparkSession

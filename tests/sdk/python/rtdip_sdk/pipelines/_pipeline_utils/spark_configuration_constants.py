@@ -19,15 +19,15 @@ import shutil
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.delta import SparkDeltaSource
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
-from src.sdk.python.rtdip_sdk.pipelines.utils.spark import SparkClient
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark import SparkClient
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries
 
 SPARK_TESTING_CONFIGURATION = {
-    "spark.executor.cores": "1",
+    "spark.executor.cores": "2",
     "spark.executor.instances": "1",
     "spark.sql.shuffle.partitions": "1",
     "spark.app.name": "test_app", 
-    "spark.master": "local[1]"
+    "spark.master": "local[*]"
 }
 
 @pytest.fixture(scope="session")

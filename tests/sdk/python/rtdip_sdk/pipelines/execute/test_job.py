@@ -15,6 +15,9 @@
 import sys
 sys.path.insert(0, '.')
 
+from pyspark.sql.types import StructField, TimestampType, StringType, FloatType, DateType
+
+from src.sdk.python.rtdip_sdk.pipelines.utilities.spark.delta import TableCreateUtility
 from src.sdk.python.rtdip_sdk.pipelines.execute.job import PipelineJob, PipelineJobExecute, PipelineStep, PipelineTask
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
 from src.sdk.python.rtdip_sdk.pipelines.transformers.spark.eventhub import EventhubBodyBinaryToString
@@ -86,29 +89,51 @@ def test_pipeline_job_execute():
 def test_pipeline_delta_sharing_job_execute():
     step_list = []
 
-    # read step  
+    # create table
     step_list.append(PipelineStep(
         name="test_step1",
         description="test_step1",
+        component=TableCreateUtility,
+        component_parameters={
+            "table_name": "test_table_delta_sharing",
+            "columns": [
+                StructField("EventDate", DateType(), False, {"delta.generationExpression": "CAST(EventTime AS DATE)"}),
+                StructField("TagName", StringType(), False),
+                StructField("EventTime", TimestampType(), False),
+                StructField("Status", StringType(), True),
+                StructField("Value", FloatType(), True),
+            ],
+            "partitioned_by": ["EventDate"],
+            "properties": {"delta.logRetentionDuration": "7 days", "delta.enableChangeDataFeed": "true"},
+            "comment": "Test Table for Delta Sharing"
+        }
+    ))
+
+    # read step  
+    step_list.append(PipelineStep(
+        name="test_step2",
+        description="test_step2",
         component=SparkDeltaSharingSource,
         component_parameters={
             "table_path": "/workspaces/core/config.share#unity_catalog_pernis_share.sensors.pernis_restricted_events_float",
             "options": {},
         },
-        provide_output_to_step=["test_step2"]
+        depends_on_step="test_step1",
+        provide_output_to_step=["test_step3"]
     ))
 
     # write step
     step_list.append(PipelineStep(
-        name="test_step2",
-        description="test_step2",
+        name="test_step3",
+        description="test_step3",
         component=SparkDeltaDestination,
         component_parameters={
             "table_name": "test_table_delta_sharing",
-            "options": {},
-            "mode": "overwrite"    
+            "options": {"checkpointLocation": "./spark-checkpoints/test-delta-sharing"},
+            "mode": "append",
+            "query_name": "test_query_name"
         },
-        depends_on_step="test_step1"
+        depends_on_step="test_step2"
     ))
 
     task = PipelineTask(

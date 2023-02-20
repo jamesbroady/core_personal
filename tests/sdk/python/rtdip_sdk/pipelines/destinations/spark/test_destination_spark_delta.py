@@ -15,7 +15,7 @@
 import sys
 sys.path.insert(0, '.')
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
-from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import spark_session
+from tests.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark_configuration_constants import spark_session
 from pyspark.sql.functions import lit
 from pyspark.sql import SparkSession
 

@@ -4,10 +4,6 @@ from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseI
 class DestinationInterface(PipelineComponentBaseInterface):
 
     @abstractmethod
-    def destination_definition(self) -> dict:
-        pass
-
-    @abstractmethod
     def pre_write_validation(self) -> bool:
         pass
 

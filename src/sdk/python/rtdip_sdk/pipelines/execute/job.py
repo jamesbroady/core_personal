@@ -19,8 +19,9 @@ from src.sdk.python.rtdip_sdk.pipelines.execute.container import Clients, Config
 from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
 from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseInterface
 from src.sdk.python.rtdip_sdk.pipelines.transformers.interfaces import TransformerInterface
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, SystemType
-from pyspark.sql import SparkSession
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, SystemType
+
+from src.sdk.python.rtdip_sdk.pipelines.utilities.interfaces import UtilitiesInterface
 
 class PipelineStep():
     name: str
@@ -138,6 +139,8 @@ class PipelineJobExecute():
                 if key == "spark":
                     provider.add_kwargs(spark=Clients.spark_client().spark_session)
             # add parameters
+            if isinstance(step.component, DestinationInterface):
+                step.component_parameters["query_name"] = step.name
             provider.add_kwargs(**step.component_parameters)
             # set provider
             container.set_provider(
@@ -156,21 +159,29 @@ class PipelineJobExecute():
             task_results = {}
             for step in ordered_step_list:
                 factory = container.providers.get(step.name)
+
                 # source components
                 if isinstance(factory(), SourceInterface):
                     if task.batch_task:
                         result = factory().read_batch()
                     else:
                         result = factory().read_stream()
+                        
                 # transformer components
                 elif isinstance(factory(), TransformerInterface):
                     result = factory().transform(task_results[step.name])
+
                 # destination components
                 elif isinstance(factory(), DestinationInterface):
                     if task.batch_task:
                         result = factory().write_batch(task_results[step.name])
                     else:
-                        result = factory().read_stream(task_results[step.name])
+                        result = factory().write_stream(task_results[step.name])
+
+                # utilities components
+                elif isinstance(factory(), UtilitiesInterface):
+                    result = factory().execute()  
+
                 # store results for steps that need it as input
                 if step.provide_output_to_step is not None:
                     for step in step.provide_output_to_step:

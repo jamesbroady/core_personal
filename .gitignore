@@ -133,3 +133,7 @@ dmypy.json
 
 # Spark
 spark-warehouse/
+spark-checkpoints/
+
+# Delta Sharing
+config.share

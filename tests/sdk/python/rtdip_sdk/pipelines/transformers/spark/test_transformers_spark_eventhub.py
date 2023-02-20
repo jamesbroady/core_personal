@@ -15,8 +15,8 @@
 import sys
 sys.path.insert(0, '.')
 from src.sdk.python.rtdip_sdk.pipelines.transformers.spark.eventhub import EventhubBodyBinaryToString
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, SystemType
-from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import spark_session
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, SystemType
+from tests.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark_configuration_constants import spark_session
 
 from pyspark.sql import SparkSession, DataFrame
 

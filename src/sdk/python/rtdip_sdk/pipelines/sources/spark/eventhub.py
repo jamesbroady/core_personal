@@ -16,7 +16,7 @@ import logging
 from pyspark.sql import DataFrame, SparkSession
 
 from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibrary, SystemType
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
 
 class SparkEventhubSource(SourceInterface):
     '''

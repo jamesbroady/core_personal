@@ -16,9 +16,9 @@ import sys
 sys.path.insert(0, '.')
 import pytest
 from pyspark.sql import SparkSession
-from src.sdk.python.rtdip_sdk.pipelines.utils.spark import SparkClient
-from tests.sdk.python.rtdip_sdk.pipelines.utils.spark_configuration_constants import SPARK_TESTING_CONFIGURATION
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark import SparkClient
+from tests.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark_configuration_constants import SPARK_TESTING_CONFIGURATION
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries
 
 def test_get_spark_session():
     spark_client = SparkClient({**{"configuration_test1": "configuration_test_value1", "configuration_test2": "configuration_test_value2"}, **SPARK_TESTING_CONFIGURATION}, Libraries())

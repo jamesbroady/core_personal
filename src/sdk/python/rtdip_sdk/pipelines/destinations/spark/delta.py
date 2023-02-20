@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import logging
-from pyspark.sql import DataFrame, SparkSession
+import time
+from pyspark.sql import DataFrame
 from py4j.protocol import Py4JJavaError
-from delta.tables import DeltaTable
 
 from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
-from src.sdk.python.rtdip_sdk.pipelines.utils.models import Libraries, MavenLibrary, SystemType
+from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
 
 class SparkDeltaDestination(DestinationInterface):
     '''
@@ -27,11 +27,15 @@ class SparkDeltaDestination(DestinationInterface):
     table_name: str
     options: dict
     mode: str
+    trigger: str
+    query_name: str
 
-    def __init__(self, table_name:str, options: dict, mode: str = "append") -> None:
+    def __init__(self, table_name:str, options: dict, mode: str = "append", trigger="10 seconds", query_name=None) -> None:
         self.table_name = table_name
         self.options = options
         self.mode = mode
+        self.trigger = trigger
+        self.query_name = query_name
 
     @staticmethod
     def system_type():
@@ -55,15 +59,6 @@ class SparkDeltaDestination(DestinationInterface):
             "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
         }
-    
-    def destination_definition(self, spark: SparkSession) -> dict:
-        delta_table = (
-            DeltaTable
-            .createIfNotExists(spark)
-            .tableName(self.table_name)
-            .addColumn("id", "string")
-            .execute()       
-        )
     
     def pre_write_validation(self):
         return True
@@ -95,13 +90,20 @@ class SparkDeltaDestination(DestinationInterface):
         '''
         '''
         try:
-            return (df
+            query = (df
                 .writeStream
+                .trigger(processingTime=self.trigger)
                 .format("delta")
+                .queryName(self.query_name)
                 .outputMode(self.mode)
                 .options(**self.options)
                 .toTable(self.table_name)
             )
+            
+            while query.isActive:
+                if query.lastProgress:
+                    logging.info(query.lastProgress)
+                time.sleep(30)
 
         except Py4JJavaError as e:
             logging.exception('error with spark write stream delta function', e.errmsg)
