@@ -20,7 +20,15 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries,
 
 class SparkDeltaSource(SourceInterface):
     '''
+    The Spark Delta Source is used to read data from a Delta table. 
 
+    The connection class represents a connection to a database and uses the Databricks SQL Connector API's for Python to intereact with cluster/jobs.
+    To find details for SQL warehouses server_hostname and http_path location to the SQL Warehouse tab in the documentation.
+    
+    Args:
+        spark: Spark Session required to read data from a Delta table
+        options: Options that can be specified for a Delta Table read operation. Further information on the options available is [here](https://docs.delta.io/latest/delta-streaming.html#delta-table-as-a-source)
+        table_name: Name of the Hive Metastore or Unity Catalog Delta Table
     ''' 
     spark: SparkSession
     options: dict

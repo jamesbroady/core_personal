@@ -44,15 +44,13 @@ class PipelineTask():
     description: str
     depends_on_task: list[str]
     step_list: list[PipelineStep]
-    provide_output_to_task: list[str]
     batch_task: bool
 
-    def __init__(self, name: str, description: str, step_list: list[PipelineStep], depends_on_task: str = None, provide_output_to_task: str = None, batch_task: bool = False):
+    def __init__(self, name: str, description: str, step_list: list[PipelineStep], depends_on_task: str = None, batch_task: bool = False):
         self.name = name
         self.description = description
         self.depends_on_task = depends_on_task
         self.step_list = step_list
-        self.provide_output_to_task = provide_output_to_task
         self.batch_task = batch_task
 
 class PipelineJob():

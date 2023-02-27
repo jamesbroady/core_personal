@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from enum import Enum
+from typing import Optional, List
+
+from pydantic import BaseModel
 
 class SystemType(Enum):
     """The type of the system."""
@@ -29,44 +32,30 @@ class LibraryTypes(Enum):
     PYPI = 2
     PYTHONWHL = 3
 
-class MavenLibrary():
+class MavenLibrary(BaseModel):
     group_id: str
     artifact_id: str
     version: str
-    repository: str
-
-    def __init__(self, group_id: str, artifact_id: str, version: str, repository: str = None):
-        self.group_id = group_id
-        self.artifact_id = artifact_id
-        self.version = version
-        self.repository = repository
+    repo: Optional[str]
 
     def to_string(self) -> str:
         return f"{self.group_id}:{self.artifact_id}:{self.version}"
 
-class PyPiLibrary():
+class PyPiLibrary(BaseModel):
     name: str
     version: str
+    repo: Optional[str]
 
-    def __init__(self, name: str, version: str):
-        self.name = name
-        self.version = version
+    def to_string(self) -> str:
+        return f"{self.name}=={self.version}"
 
-class PythonWheelLibrary():
+class PythonWheelLibrary(BaseModel):
     path: str
 
-    def __init__(self, path: str):
-        self.path = path
-
-class Libraries():
-    maven_libraries: list[MavenLibrary]
-    pypi_libraries: list[PyPiLibrary]
-    pythonwheel_libraries: list[PythonWheelLibrary]
-
-    def __init__(self):
-        self.maven_libraries = []
-        self.pypi_libraries = []
-        self.pythonwheel_libraries = []
+class Libraries(BaseModel):
+    maven_libraries: list[MavenLibrary] = []
+    pypi_libraries: list[PyPiLibrary] = []
+    pythonwheel_libraries: list[PythonWheelLibrary] = []
 
     def add_maven_library(self, maven_library: MavenLibrary):
         self.maven_libraries.append(maven_library)
