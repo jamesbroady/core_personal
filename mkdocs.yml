@@ -74,15 +74,25 @@ plugins:
     - search
     - autorefs
     - mkdocstrings
+    - macros:
+        module_name: docs/macros
 
 markdown_extensions:
   - attr_list
+  - md_in_html
   - meta
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
         alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 # Page tree
 nav:
@@ -129,10 +139,12 @@ nav:
                 - Azure: api/deployment/azure.md
     - Roadmaps:
           - Overview: roadmap/roadmap-overview.md
-          - 2022 Development Roadmap: roadmap/yearly-roadmaps/2022-development-roadmap.md
+          - 2023: roadmap/yearly-roadmaps/2023-development-roadmap.md
+          - 2022: roadmap/yearly-roadmaps/2022-development-roadmap.md
     - Releases:
-          - Overview: releases/releases.md
+          - core: releases/core.md
     - Blog:
           - Overview: blog/overview.md
           - Posts:
+                - RTDIP Ingestion Pipelines: blog/rtdip_ingestion_pipelines.md
                 - Delta Lakehouse and RTDIP: blog/delta_and_rtdip.md

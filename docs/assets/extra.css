@@ -44,6 +44,10 @@
   color:#d445a3;
 }
 
+.mermaid {
+  text-align: center;
+}
+
 .image-center {
   width: 90%;
   display: block;
