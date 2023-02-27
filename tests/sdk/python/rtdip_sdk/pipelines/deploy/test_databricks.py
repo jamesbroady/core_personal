@@ -99,7 +99,7 @@ def test_pipeline_job_deploy():
         databricks_task_for_pipeline_task_list=[databricks_task]
     )
 
-    databricks_job = DataBricksDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://adb-3073476248944970.10.azuredatabricks.net", token="dapicb7febf1ac9240a943834f03759c537b")
+    databricks_job = DataBricksDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://test.databricks.net", token="test_token")
 
     result = databricks_job.deploy()
     

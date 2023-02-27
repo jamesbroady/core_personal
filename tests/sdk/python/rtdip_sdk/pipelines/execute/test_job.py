@@ -30,7 +30,7 @@ def test_pipeline_job_execute():
 
     # read step
     # connection_string_secret = PipelineSecrets(type="AzureKeyVault", name="azasex", secret_name="eventhub-connection-string")
-    connection_string = "Endpoint=sb://az-as-ehns-ex-n-seq00039-ew-dev-gen-01.servicebus.windows.net/;SharedAccessKeyName=az-as-eh-ex-n-seq00039-ew-dev-gen-01;SharedAccessKey=mcc56eatw5o1944ndeMtlz2bgO6T4UBdyu5TIwd7D2c=;EntityPath=az-as-eh-ex-n-seq00039-ew-dev-gen-01" #"Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
+    connection_string = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
     eventhub_configuration = {
         "eventhubs.connectionString": connection_string, 
         "eventhubs.consumerGroup": "$Default",
