@@ -14,8 +14,8 @@
 
 from pyspark.sql import DataFrame
 
-from src.sdk.python.rtdip_sdk.pipelines.transformers.interfaces import TransformerInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, SystemType
+from ..interfaces import TransformerInterface
+from ..._pipeline_utils.models import Libraries, SystemType
 
 class EventhubBodyBinaryToString(TransformerInterface):
     '''

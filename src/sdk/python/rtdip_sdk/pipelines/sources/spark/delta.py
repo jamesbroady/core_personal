@@ -15,8 +15,9 @@
 import logging
 from pyspark.sql import DataFrame, SparkSession
 
-from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import SourceInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..._pipeline_utils.constants import DEFAULT_PACKAGES
 
 class SparkDeltaSource(SourceInterface):
     '''
@@ -46,13 +47,7 @@ class SparkDeltaSource(SourceInterface):
     @staticmethod
     def libraries():
         libraries = Libraries()
-        libraries.add_maven_library(
-            MavenLibrary(
-                group_id="io.delta",
-                artifact_id="delta-core_2.12",
-                version="2.2.0"
-            )
-        )
+        libraries.add_maven_library(DEFAULT_PACKAGES["spark_delta_core"])
         return libraries
     
     @staticmethod

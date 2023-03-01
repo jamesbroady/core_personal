@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional, Type, Union
 from dependency_injector import containers, providers
 from dependency_injector.containers import DynamicContainer
+from pydantic import BaseModel
 from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
 from src.sdk.python.rtdip_sdk.pipelines.execute.container import Clients, Configs
 from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
@@ -23,45 +25,31 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries,
 
 from src.sdk.python.rtdip_sdk.pipelines.utilities.interfaces import UtilitiesInterface
 
-class PipelineStep():
+class PipelineStep(BaseModel):
     name: str
     description: str
-    depends_on_step: list[str]
-    component: PipelineComponentBaseInterface
-    component_parameters: dict
-    provide_output_to_step: list[str]
+    depends_on_step: Optional[list[str]]
+    component: Union[Type[SourceInterface], Type[TransformerInterface], Type[DestinationInterface], Type[UtilitiesInterface]]
+    component_parameters: Optional[dict]
+    provide_output_to_step: Optional[list[str]]
 
-    def __init__(self, name: str, description: str, component: PipelineComponentBaseInterface, component_parameters: dict, depends_on_step: str = None, provide_output_to_step: list[str] = None):
-        self.name = name
-        self.description = description
-        self.component = component
-        self.component_parameters = component_parameters
-        self.depends_on_step = depends_on_step
-        self.provide_output_to_step = provide_output_to_step
+    class Config:
+        json_encoders = {
+            Union[Type[SourceInterface], Type[TransformerInterface], Type[DestinationInterface], Type[UtilitiesInterface]]: lambda x: x.__name__
+        }
 
-class PipelineTask():
+class PipelineTask(BaseModel):
     name: str
     description: str
-    depends_on_task: list[str]
+    depends_on_task: Optional[list[str]]
     step_list: list[PipelineStep]
-    batch_task: bool
+    batch_task: Optional[bool]
 
-    def __init__(self, name: str, description: str, step_list: list[PipelineStep], depends_on_task: str = None, batch_task: bool = False):
-        self.name = name
-        self.description = description
-        self.depends_on_task = depends_on_task
-        self.step_list = step_list
-        self.batch_task = batch_task
-
-class PipelineJob():
+class PipelineJob(BaseModel):
     name: str
     description: str
+    version: str
     task_list: list[PipelineTask]
-
-    def __init__(self, name: str, description: str, task_list: list[PipelineTask]):
-        self.name = name
-        self.description = description
-        self.task_list = task_list
 
 class PipelineJobExecute():
     job: PipelineJob

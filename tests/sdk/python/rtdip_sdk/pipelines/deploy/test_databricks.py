@@ -13,12 +13,8 @@
 # limitations under the License.
 
 import sys
-
-from src.sdk.python.rtdip_sdk.pipelines.deploy.databricks import DataBricksDeploy
-from src.sdk.python.rtdip_sdk.pipelines.deploy.models.databricks import DatabricksCluster, DatabricksJobCluster, DatabricksJobForPipelineJob, DatabricksTaskForPipelineTask
 sys.path.insert(0, '.')
-
-from pyspark.sql.types import StructField, TimestampType, StringType, FloatType, DateType
+import json
 
 from src.sdk.python.rtdip_sdk.pipelines.utilities.spark.delta import TableCreateUtility
 from src.sdk.python.rtdip_sdk.pipelines.execute.job import PipelineJob, PipelineJobExecute, PipelineStep, PipelineTask
@@ -26,7 +22,10 @@ from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEvent
 from src.sdk.python.rtdip_sdk.pipelines.transformers.spark.eventhub import EventhubBodyBinaryToString
 from src.sdk.python.rtdip_sdk.pipelines.destinations.spark.delta import SparkDeltaDestination
 from src.sdk.python.rtdip_sdk.pipelines.sources.spark.delta_sharing import SparkDeltaSharingSource
-import json
+from src.sdk.python.rtdip_sdk.pipelines.deploy.databricks import DataBricksDeploy, DatabricksDBXDeploy
+from src.sdk.python.rtdip_sdk.pipelines.deploy.models.databricks import DatabricksCluster, DatabricksJobCluster, DatabricksJobForPipelineJob, DatabricksTaskForPipelineTask
+
+
 
 def test_pipeline_job_deploy():
     step_list = []
@@ -53,7 +52,7 @@ def test_pipeline_job_deploy():
         description="test_step2",
         component=EventhubBodyBinaryToString,
         component_parameters={},
-        depends_on_step="test_step1",
+        depends_on_step=["test_step1"],
         provide_output_to_step=["test_step3"]
     ))
 
@@ -67,7 +66,7 @@ def test_pipeline_job_deploy():
             "options": {},
             "mode": "overwrite"    
         },
-        depends_on_step="test_step2"
+        depends_on_step=["test_step2"]
     ))
 
     task = PipelineTask(
@@ -78,17 +77,20 @@ def test_pipeline_job_deploy():
     )
 
     pipeline_job = PipelineJob(
-        name="test_job",
+        name="test_job2",
         description="test_job", 
+        version="0.0.2",
         task_list=[task]
     )
 
     databricks_job_cluster = DatabricksJobCluster(
         job_cluster_key="test_job_cluster", 
         new_cluster=DatabricksCluster(
-            node_type_id = "Standard_DS3_v2",
-            spark_version = "12.1.x-scala2.12",
-            num_workers = 2
+            # node_type_id = "Standard_E4ds_v5",
+            spark_version = "11.3.x-scala2.12",
+            virtual_cluster_size = "VirtualSmall",
+            enable_serverless_compute = True
+            # num_workers = 2
         )
     )
 
@@ -99,7 +101,7 @@ def test_pipeline_job_deploy():
         databricks_task_for_pipeline_task_list=[databricks_task]
     )
 
-    databricks_job = DataBricksDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://test.databricks.net", token="test_token")
+    databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://adb-3073476248944970.10.azuredatabricks.net", token="dapicb7febf1ac9240a943834f03759c537b")
 
     result = databricks_job.deploy()
     

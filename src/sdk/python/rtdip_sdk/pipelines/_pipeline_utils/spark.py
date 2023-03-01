@@ -15,8 +15,8 @@
 import logging
 from pyspark.sql import SparkSession
 from dotenv import load_dotenv
-from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, SystemType
+from ..interfaces import PipelineComponentBaseInterface
+from .models import Libraries, SystemType
 
 class SparkClient():
     spark_configuration: dict

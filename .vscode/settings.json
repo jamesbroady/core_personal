@@ -32,5 +32,6 @@
     "git.alwaysSignOff": true,
     "githubPullRequests.ignoredPullRequestBranches": [
         "develop"
-    ]
+    ],
+    "python.formatting.provider": "black"
 }

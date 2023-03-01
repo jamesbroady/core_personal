@@ -58,8 +58,8 @@ class DatabricksClusterLogConfig(BaseModel):
     s3: Optional[object]
 
 class DatabricksCluster(BaseModel):
-    node_type_id: str
     spark_version: str
+    node_type_id: Optional[str]
     cluster_name: Optional[str]
     num_workers: Optional[int]
     runtime_engine: Optional[DatabricksClusterRuntimeEngine]
@@ -78,6 +78,8 @@ class DatabricksCluster(BaseModel):
     autotermination_minutes: Optional[int]
     cluster_log_conf: Optional[DatabricksClusterLogConfig]
     enable_elastic_disk: Optional[bool]
+    virtual_cluster_size: Optional[str]
+    enable_serverless_compute: Optional[bool]
 
 class DatabricksJobPauseStatus(Enum):
     UNPAUSED = "UNPAUSED"
@@ -224,4 +226,11 @@ class DatabricksJobForPipelineJob(BaseModel):
     max_concurrent_runs: Optional[int]
     git_source: Optional[DatabricksJobGitSource]
     format: Optional[DatabricksJobFormat]
-    access_control_list: Optional[DatabricksJobAccessControlList] 
+    access_control_list: Optional[DatabricksJobAccessControlList]
+
+class DatabricksDBXProject(BaseModel):
+    environments: dict
+    inplace_jinja_support: bool
+    failsafe_cluster_reuse_with_assets: bool
+    context_based_upload_for_execute: bool
+

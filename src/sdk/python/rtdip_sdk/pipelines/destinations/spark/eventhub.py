@@ -16,8 +16,9 @@ import logging
 from pyspark.sql import DataFrame, SparkSession
 from py4j.protocol import Py4JJavaError
 
-from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import DestinationInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..._pipeline_utils.constants import DEFAULT_PACKAGES
 
 class SparkDeltaDestination(DestinationInterface):
     '''
@@ -39,13 +40,7 @@ class SparkDeltaDestination(DestinationInterface):
     @staticmethod
     def libraries():
         spark_libraries = Libraries()
-        spark_libraries.add_maven_library(
-            MavenLibrary(
-                group_id="com.microsoft.azure",
-                artifact_id="azure-eventhubs-spark_2.12",
-                version="2.3.22"
-            )
-        )
+        spark_libraries.add_maven_library(DEFAULT_PACKAGES["spark_azure_eventhub"])
         return spark_libraries
     
     @staticmethod

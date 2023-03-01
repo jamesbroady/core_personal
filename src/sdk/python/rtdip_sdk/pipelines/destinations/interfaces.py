@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from src.sdk.python.rtdip_sdk.pipelines.interfaces import PipelineComponentBaseInterface
+from ..interfaces import PipelineComponentBaseInterface
 
 class DestinationInterface(PipelineComponentBaseInterface):
 

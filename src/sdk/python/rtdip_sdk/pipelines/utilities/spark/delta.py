@@ -18,8 +18,8 @@ from pyspark.sql.types import StructField
 from py4j.protocol import Py4JJavaError
 from delta.tables import DeltaTable
 
-from src.sdk.python.rtdip_sdk.pipelines.utilities.interfaces import UtilitiesInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import UtilitiesInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
 
 class TableCreateUtility(UtilitiesInterface):
     '''

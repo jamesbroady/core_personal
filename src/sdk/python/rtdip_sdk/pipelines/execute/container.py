@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from dependency_injector import containers, providers
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark import SparkClient
+from .._pipeline_utils.models import Libraries
+from .._pipeline_utils.spark import SparkClient
 
 class Configs(containers.DeclarativeContainer):
     """Container for pipeline configs."""

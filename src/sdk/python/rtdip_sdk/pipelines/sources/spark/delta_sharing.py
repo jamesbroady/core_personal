@@ -16,8 +16,9 @@ import logging
 from pyspark.sql import DataFrame, SparkSession
 from py4j.protocol import Py4JJavaError
 
-from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import SourceInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..._pipeline_utils.constants import DEFAULT_PACKAGES
 
 class SparkDeltaSharingSource(SourceInterface):
     '''
@@ -39,13 +40,7 @@ class SparkDeltaSharingSource(SourceInterface):
     @staticmethod
     def libraries():
         libraries = Libraries()
-        libraries.add_maven_library(
-            MavenLibrary(
-                group_id="io.delta",
-                artifact_id="delta-sharing-spark_2.12",
-                version="0.6.2"
-            )
-        )
+        libraries.add_maven_library(DEFAULT_PACKAGES["spark_delta_sharing"])
         return libraries
     
     @staticmethod

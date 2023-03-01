@@ -17,8 +17,9 @@ import time
 from pyspark.sql import DataFrame
 from py4j.protocol import Py4JJavaError
 
-from src.sdk.python.rtdip_sdk.pipelines.destinations.interfaces import DestinationInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import DestinationInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..._pipeline_utils.constants import DEFAULT_PACKAGES
 
 class SparkDeltaDestination(DestinationInterface):
     '''
@@ -44,13 +45,7 @@ class SparkDeltaDestination(DestinationInterface):
     @staticmethod
     def libraries():
         libraries = Libraries()
-        libraries.add_maven_library(
-            MavenLibrary(
-                group_id="io.delta",
-                artifact_id="delta-core_2.12",
-                version="2.2.0"
-            )
-        )
+        libraries.add_maven_library(DEFAULT_PACKAGES["spark_delta_core"])
         return libraries
     
     @staticmethod

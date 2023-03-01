@@ -23,11 +23,11 @@ from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark import SparkClient
 from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries
 
 SPARK_TESTING_CONFIGURATION = {
-    "spark.executor.cores": "2",
-    "spark.executor.instances": "1",
-    "spark.sql.shuffle.partitions": "1",
+    # "spark.executor.cores": "2",
+    # "spark.executor.instances": "1",
+    # "spark.sql.shuffle.partitions": "1",
     "spark.app.name": "test_app", 
-    "spark.master": "local[*]"
+    # "spark.master": "local[*]"
 }
 
 @pytest.fixture(scope="session")
