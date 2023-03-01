@@ -14,9 +14,11 @@
 
 import logging
 from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.types import StructType, StructField, BinaryType, StringType, LongType, TimestampType, MapType
 
-from src.sdk.python.rtdip_sdk.pipelines.sources.interfaces import SourceInterface
-from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..interfaces import SourceInterface
+from ..._pipeline_utils.models import Libraries, MavenLibrary, SystemType
+from ..._pipeline_utils.constants import DEFAULT_PACKAGES
 
 class SparkEventhubSource(SourceInterface):
     '''
@@ -28,6 +30,18 @@ class SparkEventhubSource(SourceInterface):
     def __init__(self, spark: SparkSession, options: dict) -> None:
         self.spark = spark
         self.options = options
+        self.schema = StructType(
+            [StructField('body', BinaryType(), True), 
+             StructField('partition', StringType(), True), 
+             StructField('offset', StringType(), True), 
+             StructField('sequenceNumber', LongType(), True), 
+             StructField('enqueuedTime', TimestampType(), True), 
+             StructField('publisher', StringType(), True), 
+             StructField('partitionKey', StringType(), True), 
+             StructField('properties', MapType(StringType(), StringType(), True), True), 
+             StructField('systemProperties', MapType(StringType(), StringType(), True), True)]
+        )
+
 
     @staticmethod
     def system_type():
@@ -36,23 +50,18 @@ class SparkEventhubSource(SourceInterface):
     @staticmethod
     def libraries():
         spark_libraries = Libraries()
-        spark_libraries.add_maven_library(
-            MavenLibrary(
-                group_id="com.microsoft.azure",
-                artifact_id="azure-eventhubs-spark_2.12",
-                version="2.3.22"
-            )
-        )
+        spark_libraries.add_maven_library(DEFAULT_PACKAGES["spark_azure_eventhub"])
         return spark_libraries
     
     @staticmethod
     def settings() -> dict:
         return {}
     
-    def pre_read_validation(self):
+    def pre_read_validation(self) -> bool:
         return True
     
-    def post_read_validation(self):
+    def post_read_validation(self, df: DataFrame) -> bool:
+        assert df.schema == self.schema
         return True
 
     def read_batch(self) -> DataFrame:
