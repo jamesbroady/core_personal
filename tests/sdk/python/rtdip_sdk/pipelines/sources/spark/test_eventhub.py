@@ -27,7 +27,7 @@ def test_spark_eventhub_read_batch(spark_session: SparkSession):
         "eventhubs.startingPosition": json.dumps({"offset": "0", "seqNo": -1, "enqueuedTime": None, "isInclusive": True})
     }
     eventhub_source = SparkEventhubSource(spark_session, eventhub_configuration)
-    assert eventhub_source.pre_read_validation(df)
+    assert eventhub_source.pre_read_validation()
     df = eventhub_source.read_batch()
     assert isinstance(df, DataFrame)
     assert eventhub_source.post_read_validation(df)
@@ -40,6 +40,7 @@ def test_spark_eventhub_read_stream(spark_session):
         "eventhubs.startingPosition": json.dumps({"offset": "0", "seqNo": -1, "enqueuedTime": None, "isInclusive": True})
     }
     eventhub_source = SparkEventhubSource(spark_session, eventhub_configuration)
-    df = eventhub_source.read_stream(spark_session, eventhub_configuration)
+    assert eventhub_source.pre_read_validation()
+    df = eventhub_source.read_stream()
     assert isinstance(df, DataFrame)
-    assert df.schema == StructType([StructField('body', BinaryType(), True), StructField('partition', StringType(), True), StructField('offset', StringType(), True), StructField('sequenceNumber', LongType(), True), StructField('enqueuedTime', TimestampType(), True), StructField('publisher', StringType(), True), StructField('partitionKey', StringType(), True), StructField('properties', MapType(StringType(), StringType(), True), True), StructField('systemProperties', MapType(StringType(), StringType(), True), True)])
+    assert eventhub_source.post_read_validation(df)

@@ -67,6 +67,7 @@ class SparkDeltaSource(SourceInterface):
             return (self.spark
                 .read
                 .format("delta")
+                .options(**self.options)
                 .table(self.table_name)
             )
 
@@ -74,14 +75,14 @@ class SparkDeltaSource(SourceInterface):
             logging.exception('error with spark read batch delta function', e.__traceback__)
             raise e
         
-    def read_stream(self, spark: SparkSession, options: dict) -> DataFrame:
+    def read_stream(self) -> DataFrame:
         '''
         '''
         try:
-            return (spark
+            return (self.spark
                 .readStream
                 .format("delta")
-                .options(**options)
+                .options(**self.options)
                 .load(self.table_name)
             )
 

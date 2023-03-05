@@ -31,7 +31,7 @@ class SparkDeltaDestination(DestinationInterface):
     trigger: str
     query_name: str
 
-    def __init__(self, table_name:str, options: dict, mode: str = "append", trigger="10 seconds", query_name=None) -> None:
+    def __init__(self, table_name:str, options: dict, mode: str = "append", trigger="10 seconds", query_name="DeltaDestination") -> None:
         self.table_name = table_name
         self.options = options
         self.mode = mode
