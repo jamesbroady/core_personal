@@ -41,6 +41,7 @@ Below is an example of a simple pipeline that can be deployed to an orchestratio
 The setup imports the relevant components for the pipeline and creates a list to capture each step. 
 
 ```python
+import os
 from rtdip_sdk.pipelines.execute.job import PipelineJob, PipelineJobExecute, PipelineStep, PipelineTask
 from rtdip_sdk.pipelines.utilities.spark.delta import TableCreateUtility
 from rtdip_sdk.pipelines.sources.spark.eventhub import SparkEventhubSource
@@ -161,11 +162,11 @@ pipeline_job = PipelineJob(
 
 ### Execute
 
-It is now possible to execute the pipeline with the below commands. This can be done using the PipelineJobExecute as per the code below.
+While the expected process would be to deploy the job to an environment, it is now possible to execute the pipeline immediately with the below commands. This can be done using the PipelineJobExecute as per the code below.
 
 ```python
 # run pipeline
-pipeline = PipelineJobExecute(job)
+pipeline = PipelineJobExecute(pipeline_job)
 
 pipeline.run()
 ```
@@ -192,7 +193,7 @@ databricks_job = DatabricksJobForPipelineJob(
     databricks_task_for_pipeline_task_list=[databricks_task]
 )
 
-databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://test.databricks.net", token="test_token")
+databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host=os.environ.get"DATABRICKS_HOST", token=os.environ.get"DATABRICKS_TOKEN")
 
 databricks_job.deploy()
 ```
