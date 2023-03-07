@@ -115,7 +115,7 @@ step_list.append(PipelineStep(
 ))
 ```
 
-### Destinations
+### Destination
 
 Destination components write data to their relevant target systems. For more information on the list of transformers for RTDIP Pipelines, please click [here](https://www.rtdip.io/blog/rtdip_ingestion_pipelines/#destinations).
 
