@@ -115,7 +115,7 @@ def test_pipeline_delta_sharing_job_execute():
         description="test_step2",
         component=SparkDeltaSharingSource,
         component_parameters={
-            "table_path": "/workspaces/core/config.share#unity_catalog_pernis_share.sensors.pernis_restricted_events_float",
+            "table_path": "config.share#unity_catalog.schema.table",
             "options": {},
         },
         depends_on_step="test_step1",

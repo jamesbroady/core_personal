@@ -107,6 +107,7 @@ nav:
     - SDK:
           - Overview: sdk/overview.md
           - Getting Started: sdk/rtdip-sdk-usage.md
+          - Pipelines: sdk/pipelines/Overview.md
           - SQL Warehouses: sdk/sqlwarehouses/sql-warehouses.md
           - Troubleshooting: sdk/troubleshooting.md
           - Code Reference:
