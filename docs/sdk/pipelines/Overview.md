@@ -199,4 +199,4 @@ databricks_job.deploy()
 
 ## Conclusion
 
-RTDIP Pipelines allow for modular components to be setup as a series of steps to for a task of a job. This job is then able to be deployed to an orcehstration engine to be run as per the relevant use case.
+RTDIP Pipelines allow for modular components to be setup as a series of steps for a task of a job. This job is then able to be deployed to an orchestration engine to be run as per the relevant use case.
