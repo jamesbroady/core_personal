@@ -140,6 +140,7 @@ step_list.append(PipelineStep(
 It is now possible to define a Pipeline Task. This can be done as per the below.
 
 ```python
+# create a pipeline task
 task_list = [PipelineTask(
     name="test_task",
     description="test_task",
@@ -152,6 +153,7 @@ task_list = [PipelineTask(
 The tasks can then be added to the Pipeline job as per the below.
 
 ```python
+# create a pipeline job
 pipeline_job = PipelineJob(
     name="test_job",
     description="test_job", 
