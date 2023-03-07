@@ -193,7 +193,12 @@ databricks_job = DatabricksJobForPipelineJob(
     databricks_task_for_pipeline_task_list=[databricks_task]
 )
 
-databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host=os.environ.get"DATABRICKS_HOST", token=os.environ.get"DATABRICKS_TOKEN")
+databricks_job = DatabricksDBXDeploy(
+  pipeline_job=pipeline_job, 
+  databricks_job_for_pipeline_job=databricks_job, 
+  host=os.environ.get"DATABRICKS_HOST", 
+  token=os.environ.get"DATABRICKS_TOKEN"
+)
 
 databricks_job.deploy()
 ```
