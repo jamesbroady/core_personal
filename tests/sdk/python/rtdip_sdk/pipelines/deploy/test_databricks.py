@@ -28,6 +28,7 @@ from src.sdk.python.rtdip_sdk.pipelines.deploy.models.databricks import Databric
 
 
 def test_pipeline_job_deploy():
+    step_list = []
     # read step
     # connection_string_secret = PipelineSecrets(type="AzureKeyVault", name="azasex", secret_name="eventhub-connection-string")
     connection_string = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=test;EntityPath=test"
@@ -75,9 +76,9 @@ def test_pipeline_job_deploy():
     )
 
     pipeline_job = PipelineJob(
-        name="test_job2",
+        name="test_job",
         description="test_job", 
-        version="0.0.2",
+        version="0.0.1",
         task_list=[task]
     )
 
@@ -99,7 +100,7 @@ def test_pipeline_job_deploy():
         databricks_task_for_pipeline_task_list=[databricks_task]
     )
 
-    databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://test.databricks.net", token="test_token")
+    databricks_job = DatabricksDBXDeploy(pipeline_job=pipeline_job, databricks_job_for_pipeline_job=databricks_job, host="https://adb-3073476248944970.10.azuredatabricks.net", token="dapicb7febf1ac9240a943834f03759c537b")
 
     result = databricks_job.deploy()
     
