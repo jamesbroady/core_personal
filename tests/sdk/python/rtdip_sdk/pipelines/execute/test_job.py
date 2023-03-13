@@ -50,7 +50,7 @@ def test_pipeline_job_execute():
         description="test_step2",
         component=EventhubBodyBinaryToString,
         component_parameters={},
-        depends_on_step="test_step1",
+        depends_on_step=["test_step1"],
         provide_output_to_step=["test_step3"]
     ))
 
@@ -64,7 +64,7 @@ def test_pipeline_job_execute():
             "options": {},
             "mode": "overwrite"    
         },
-        depends_on_step="test_step2"
+        depends_on_step=["test_step2"]
     ))
 
     task = PipelineTask(
@@ -76,7 +76,8 @@ def test_pipeline_job_execute():
 
     job = PipelineJob(
         name="test_job",
-        description="test_job", 
+        description="test_job",
+        version="0.0.1",
         task_list=[task]
     )
 
@@ -118,7 +119,7 @@ def test_pipeline_delta_sharing_job_execute():
             "table_path": "config.share#unity_catalog.schema.table",
             "options": {},
         },
-        depends_on_step="test_step1",
+        depends_on_step=["test_step1"],
         provide_output_to_step=["test_step3"]
     ))
 
@@ -133,7 +134,7 @@ def test_pipeline_delta_sharing_job_execute():
             "mode": "append",
             "query_name": "test_query_name"
         },
-        depends_on_step="test_step2"
+        depends_on_step=["test_step2"]
     ))
 
     task = PipelineTask(
@@ -145,7 +146,8 @@ def test_pipeline_delta_sharing_job_execute():
 
     job = PipelineJob(
         name="test_job",
-        description="test_job", 
+        description="test_job",
+        version="0.0.1",
         task_list=[task]
     )
 
