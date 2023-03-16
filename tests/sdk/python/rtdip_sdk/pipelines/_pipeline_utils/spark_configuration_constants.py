@@ -23,6 +23,7 @@ from src.sdk.python.rtdip_sdk.pipelines.sources.spark.eventhub import SparkEvent
 from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.spark import SparkClient
 from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.models import Libraries
 from src.sdk.python.rtdip_sdk.pipelines._pipeline_utils.constants import DEFAULT_PACKAGES
+from pyspark.sql import SparkSession
 
 SPARK_TESTING_CONFIGURATION = {
     # "spark.executor.cores": "2",
@@ -33,7 +34,7 @@ SPARK_TESTING_CONFIGURATION = {
 }
 
 @pytest.fixture(scope="session")
-def spark_session():
+def spark_session() -> SparkSession:
     component_list = [SparkDeltaSource(None, {}, "test_table"), SparkDeltaSharingSource(None, {}, "test_table"), SparkDeltaDestination("test_table", {}), SparkEventhubSource(None, {})]
     task_libraries = Libraries()
     task_libraries.get_libraries_from_components(component_list)
@@ -41,7 +42,7 @@ def spark_session():
     for component in component_list:
         spark_configuration = {**spark_configuration, **component.settings()}
     spark_client = SparkClient(spark_configuration, task_libraries)
-    spark = spark_client.spark_session
+    spark: SparkSession = spark_client.spark_session
     path = spark.conf.get("spark.sql.warehouse.dir")
     prefix = "file:"
     if path.startswith(prefix):
